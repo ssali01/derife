@@ -9,9 +9,16 @@ import org.junit.Assert;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.ArrayList;
+
+/**
+ * JavaFaker was used to pass on some test data
+ * Explicit wait used to handle synchronization issues
+ * POM Design Pattern was used to associate related webElements
+ */
 public class Settings_Step_Defs {
     SettingsPage settingsPage = new SettingsPage();
-    WebDriverWait wait = new WebDriverWait(Driver.getDriver(),40);
+    WebDriverWait wait = new WebDriverWait(Driver.getDriver(), 40);
     Faker faker = new Faker();
 
     @When("fill out the First and Last names lines")
@@ -36,11 +43,28 @@ public class Settings_Step_Defs {
         BrowserUtils.sleep(3);
 
     }
-    @Then("it should be in the following format {string}")
-    public void itShouldBeInTheFollowingFormat() {
 
-        Assert.assertFalse(Boolean.parseBoolean(settingsPage.phoneNumberCell.getText()));
+    /**
+     * In this Negative testing we assert expected input vs actual input
+     */
+    @Then("it should be in the following format {string}")
+    public void itShouldBeInTheFollowingFormat(String expectedFormat) {
+        while (settingsPage.phoneNumberCell.isSelected()) {
+            settingsPage.phoneNumberCell.sendKeys(faker.letterify("2534637457846342"));
+            String actualInput = settingsPage.phoneNumberCell.getText();
+
+            if (!actualInput.contains("a-z") && actualInput.contains(")(*&^%$#@!")) {
+                Assert.assertEquals(expectedFormat, actualInput);
+
+            } else {
+                break;
+            }
+
+        }
+
+
     }
+
 
     @Then("{string} should start from Capital letter")
     public void should_start_from_capital_letter(String firstName) {
@@ -55,7 +79,6 @@ public class Settings_Step_Defs {
         BrowserUtils.sleep(3);
         Assert.assertFalse(lastName.startsWith(expectedLast));
     }
-
 
 
 }

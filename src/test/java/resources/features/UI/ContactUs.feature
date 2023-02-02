@@ -1,4 +1,4 @@
-@wip
+
 Feature: Title Verification Contact Us
   User story: As a user I am on Contact Us page,
   I should be able to send the message in correct format
